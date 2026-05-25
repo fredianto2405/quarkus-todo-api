@@ -12,4 +12,12 @@ public class TodoRepository implements PanacheRepository<TodoEntity> {
     public long countByUser(UUID userId) {
         return count("userId", userId);
     }
+
+    public TodoEntity findByIdAndUserId(UUID id, UUID userId) {
+        return find(
+                "id = ?1 and userId = ?2",
+                id,
+                userId
+        ).firstResult();
+    }
 }

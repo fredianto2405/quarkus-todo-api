@@ -2,6 +2,7 @@ package id.my.freddylabs.service;
 
 import id.my.freddylabs.dto.todo.TodoRequest;
 import id.my.freddylabs.entity.TodoEntity;
+import id.my.freddylabs.exception.BusinessException;
 import id.my.freddylabs.repository.TodoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -34,5 +35,43 @@ public class TodoService {
 
     public List<TodoEntity> findAll(UUID userId) {
         return todoRepository.find("userId", userId).list();
+    }
+
+    @Transactional
+    public void update(
+            UUID id,
+            UUID userId,
+            TodoRequest request
+    ) {
+
+        TodoEntity todo = todoRepository.findByIdAndUserId(id, userId);
+
+        if (todo == null) {
+            throw new BusinessException(
+                    "Todo not found",
+                    400
+            );
+        }
+
+        todo.title = request.title;
+        todo.description = request.description;
+    }
+
+    @Transactional
+    public void delete(
+            UUID id,
+            UUID userId
+    ) {
+
+        TodoEntity todo = todoRepository.findByIdAndUserId(id, userId);
+
+        if (todo == null) {
+            throw new BusinessException(
+                    "Todo not found",
+                    400
+            );
+        }
+
+        todoRepository.delete(todo);
     }
 }

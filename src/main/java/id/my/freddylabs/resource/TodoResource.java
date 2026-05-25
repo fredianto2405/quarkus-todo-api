@@ -63,4 +63,51 @@ public class TodoResource {
                 todoService.findAll(userId)
         );
     }
+
+    @PUT
+    @Path("/{id}")
+    @RolesAllowed("USER")
+    @Operation(summary = "Update todo")
+    public ApiResponse<?> update(
+            @PathParam("id") UUID id,
+            @Valid TodoRequest request
+    ) {
+
+        UUID userId = UUID.fromString(
+                jwt.getClaim("userId").toString()
+        );
+
+        todoService.update(
+                id,
+                userId,
+                request
+        );
+
+        return new ApiResponse<>(
+                true,
+                "Todo updated",
+                null
+        );
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @RolesAllowed("USER")
+    @Operation(summary = "Delete todo")
+    public ApiResponse<?> delete(
+            @PathParam("id") UUID id
+    ) {
+
+        UUID userId = UUID.fromString(
+                jwt.getClaim("userId").toString()
+        );
+
+        todoService.delete(id, userId);
+
+        return new ApiResponse<>(
+                true,
+                "Todo deleted",
+                null
+        );
+    }
 }
